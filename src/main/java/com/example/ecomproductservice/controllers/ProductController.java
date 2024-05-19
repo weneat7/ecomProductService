@@ -1,5 +1,6 @@
 package com.example.ecomproductservice.controllers;
 
+
 import com.example.ecomproductservice.dtos.CategoryResponseDto;
 import com.example.ecomproductservice.dtos.ProductRequestDto;
 import com.example.ecomproductservice.dtos.ProductResponseDto;
@@ -96,7 +97,6 @@ public class ProductController {
     }
 
     private Product convertRequestDtoIntoProduct(ProductRequestDto productRequestDto){
-
         Product product = new Product();
         product.setName(productRequestDto.getName());
         product.setPrice(productRequestDto.getPrice());
@@ -108,5 +108,4 @@ public class ProductController {
         product.setImageUrl(productRequestDto.getImageUrl());
         return product;
     }
-
 }
