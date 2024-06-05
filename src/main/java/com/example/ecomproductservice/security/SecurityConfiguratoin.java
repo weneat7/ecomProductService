@@ -17,9 +17,9 @@ public class SecurityConfiguratoin {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("products").hasAuthority("SCOPE_STUDENT")
-                        .anyRequest().authenticated()
-                )
+//                        .requestMatchers("products").hasAuthority("SCOPE_STUDENT")
+                        .anyRequest().permitAll()
+                ).cors().disable().csrf().disable()
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }

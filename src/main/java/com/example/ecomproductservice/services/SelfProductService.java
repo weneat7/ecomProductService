@@ -4,9 +4,11 @@ import com.example.ecomproductservice.models.Category;
 import com.example.ecomproductservice.models.Product;
 import com.example.ecomproductservice.repositories.CategoryRepository;
 import com.example.ecomproductservice.repositories.ProductRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service("SelfProductService")
@@ -14,19 +16,32 @@ public class SelfProductService implements ProductService {
 
     private ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private RedisTemplate<String, Object> redisTemplate;
 
     public SelfProductService(ProductRepository productRepository,
-                              CategoryRepository categoryRepository){
+                              CategoryRepository categoryRepository,
+                              RedisTemplate<String,Object> redisTemplate){
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public Product getProductById(Long id) {
+        Product p = (Product) redisTemplate.opsForHash().get("PRODUCTS","PRODUCT_"+id);
+        if(p != null)
+            return p;
+
         Optional<Product> optionalProduct = productRepository.findById(id);
-        return optionalProduct.orElse(null);
+        if(optionalProduct.isEmpty())
+            return null;
+
+        redisTemplate.opsForHash().put("PRODUCTS","PRODUCT"+id,optionalProduct.get());
+
+        return optionalProduct.get();
 
     }
+
 
     @Override
     public List<Product> getAllProducts() {
